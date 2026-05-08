@@ -1,0 +1,13 @@
+# samples/01_basic/Taskfile
+
+app: main.o utils.o
+	gcc -o app main.o utils.o
+
+main.o:
+	gcc -c main.c
+
+utils.o:
+	gcc -c utils.c
+
+clean:
+	rm -f *.o app

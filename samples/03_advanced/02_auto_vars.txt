@@ -1,0 +1,11 @@
+# samples/03_advanced/02_auto_vars.txt
+
+# $@ = ターゲット名
+# $^ = すべての依存ファイル名（スペース区切り）
+# $< = 最初の依存ファイル名
+
+final_report.pdf: intro.md body.md conclusion.md
+	@echo "ターゲット: $@"
+	@echo "すべての依存: $^"
+	@echo "最初の依存: $<"
+	# 実際にはここで pandoc $^ -o $@ のようなコマンドを想定

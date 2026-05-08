@@ -1,0 +1,16 @@
+# samples/03_advanced/03_parallel.txt
+# make -j 2 のイメージ
+
+# all は a と b に依存しているが、a と b の間に依存関係はない
+all: task_a task_b
+	echo "All tasks finished."
+
+task_a:
+	echo "Task A starting..."
+	sleep 2
+	echo "Task A done."
+
+task_b:
+	echo "Task B starting..."
+	sleep 2
+	echo "Task B done."

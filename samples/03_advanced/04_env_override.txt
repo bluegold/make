@@ -1,0 +1,7 @@
+# samples/03_advanced/04_env_override.txt
+
+# システムの環境変数に USER があればそちらを、なければ guest を使う
+USER = guest
+
+welcome:
+	echo "Welcome, $(USER)!"

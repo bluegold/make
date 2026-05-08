@@ -1,0 +1,15 @@
+# samples/01_basic/diamond_dependency.txt
+
+all: deploy
+
+deploy: build test
+	echo "Deploying the application..."
+
+build: init
+	echo "Building..."
+
+test: init
+	echo "Running tests..."
+
+init:
+	echo "Initializing workspace..."

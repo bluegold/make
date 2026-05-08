@@ -1,0 +1,8 @@
+# samples/02_variables/03_late_binding.txt
+
+# A が定義された時点では B はまだ空、または未定義
+A = $(B)
+B = final_value
+
+print_vars:
+	echo "A is $(A)"

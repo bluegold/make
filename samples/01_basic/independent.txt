@@ -1,0 +1,7 @@
+# samples/01_basic/independent.txt
+
+hello:
+	echo "Hello, World!"
+
+goodbye:
+	echo "Goodbye, World!"

@@ -1,0 +1,7 @@
+# samples/02_variables/01_basic_vars.txt
+
+NAME = world
+GREETING = Hello
+
+say_hello:
+	echo "$(GREETING), $(NAME)!"

@@ -1,0 +1,14 @@
+# samples/02_variables/02_recursive_vars.txt
+
+BIN_DIR = ./bin
+APP_NAME = myapp
+# 変数を組み合わせてパスを作る
+TARGET_PATH = $(BIN_DIR)/$(APP_NAME)
+
+build:
+	mkdir -p $(BIN_DIR)
+	touch $(TARGET_PATH)
+	echo "Built $(TARGET_PATH)"
+
+clean:
+	rm -rf $(BIN_DIR)

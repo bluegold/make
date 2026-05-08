@@ -1,0 +1,7 @@
+# samples/02_variables/05_var_loop_error.txt
+
+X = $(Y)
+Y = $(X)
+
+loop_test:
+	echo $(X)

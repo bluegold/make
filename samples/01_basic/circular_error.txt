@@ -1,0 +1,10 @@
+# samples/01_basic/circular_error.txt
+
+task_a: task_b
+	echo "A"
+
+task_b: task_c
+	echo "B"
+
+task_c: task_a
+	echo "C"
