@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Build Artifacts - samples/01_basic
+samples/01_basic/app
+samples/01_basic/*.o
+
+# Build Artifacts - samples/02_variables
+samples/02_variables/bin/
+samples/02_variables/output.txt
+
+# Build Artifacts - samples/03_advanced
+samples/03_advanced/*.md
+samples/03_advanced/*.data
+
+# OS files
+.DS_Store

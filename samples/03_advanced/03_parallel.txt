@@ -14,3 +14,6 @@ task_b:
 	echo "Task B starting..."
 	sleep 2
 	echo "Task B done."
+
+clean:
+	@echo "Nothing to clean for parallel"

@@ -1,0 +1,17 @@
+# samples/02_variables/06_var_dependency.txt
+
+DEPS = init setup
+
+all: build
+
+build: $(DEPS) prepare
+	echo "build"
+
+init:
+	echo "init" 
+
+setup:
+	echo "setup" 
+
+prepare:
+	echo "prepare" 

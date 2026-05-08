@@ -9,3 +9,6 @@ final_report.pdf: intro.md body.md conclusion.md
 	@echo "すべての依存: $^"
 	@echo "最初の依存: $<"
 	# 実際にはここで pandoc $^ -o $@ のようなコマンドを想定
+
+clean:
+	@echo "Nothing to clean for auto_vars"

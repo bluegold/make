@@ -5,3 +5,6 @@ USER = guest
 
 welcome:
 	echo "Welcome, $(USER)!"
+
+clean:
+	@echo "Nothing to clean for env_override"

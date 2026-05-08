@@ -1,0 +1,1 @@
+Executing: gcc -o app main.o utils.o

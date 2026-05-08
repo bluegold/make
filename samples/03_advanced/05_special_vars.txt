@@ -1,0 +1,9 @@
+# samples/02_variables/04_special_vars.txt
+
+# $@ はターゲット名（この場合は output.bin）に置き換わるべき
+output.bin:
+	echo "Generating $@"
+	touch $@
+
+clean:
+	rm -f output.bin

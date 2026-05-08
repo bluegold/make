@@ -1,6 +1,9 @@
 # samples/03_advanced/01_timestamp.txt
 
-# もし output.txt が input.txt より新しいなら、echo は実行されないべき
-output.txt: input.txt
-	echo "Processing input.txt..."
-	cat input.txt > output.txt
+# もし output.data が input.data より新しいなら、echo は実行されないべき
+output.data: input.data
+	echo "Processing input.data..."
+	cat input.data > output.data
+
+clean:
+	rm -f output.data input.data
