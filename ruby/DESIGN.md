@@ -129,6 +129,68 @@ end
 - 展開結果が複数語なら依存関係として分割する
 - 循環変数はここで検知する
 
+この段階を担当するのが `Normalizer` である。
+
+`Parser` はまだ「生の文字列」を保持するだけでよい。  
+`Normalizer` は、その生文字列を **依存グラフに載せられる形** に変える。
+
+### `Normalizer` が target 名まで触る理由
+
+target 名も `$(VAR)` を含む可能性があるため、依存関係と同じく正規化対象になる。
+
+たとえば入力が次のような場合を考える。
+
+```text
+NAME = app
+
+$(NAME): main.o util.o
+```
+
+このとき、パース直後の内部表現はまだ:
+
+- target 名: `$(NAME)`
+- 依存: `["main.o", "util.o"]`
+
+になっている。
+
+`Normalizer` は target 名を `app` に展開してから、最終的に実行系へ渡す。
+依存関係についても同様に、展開結果が複数語なら分割して配列に直す。
+
+### 処理の流れ
+
+```text
+Taskfile
+  |
+  v
+Parser
+  - ターゲット名や依存を生文字列で読む
+  - 変数定義も生で保持する
+  |
+  v
+Normalizer
+  - target 名を展開する
+  - dependency を展開して split する
+  - 実行しやすい Task / ParsedProgram に整える
+  |
+  v
+Resolver / Executor
+  - 依存順に実行する
+  - コマンド直前に必要ならさらに展開する
+```
+
+### データの形の変化
+
+```ruby
+# パース直後
+Task.new("$(NAME)", ["$(FILES)"], commands, line_no)
+
+# 正規化後
+Task.new("app", ["src1.c", "src2.c"], commands, line_no)
+```
+
+`Normalizer` は文字列をただ置換するだけではなく、  
+「1 本の依存文字列」を「複数の依存ノード」に分解する責務を持つ。
+
 ### 6.2 実行直前の展開
 
 コマンド文字列は実行直前に展開する。

@@ -29,6 +29,8 @@
 level2 と level3 は、level1 で作ったクラスや関数を `require` して再利用してよいものとします。
 共通処理は level1 に寄せ、上位レベルは変数展開や並列実行などの差分を足す構成にします。
 
+実装メモは [notes/resolver.md](./notes/resolver.md) と [notes/level3.md](./notes/level3.md) にまとめています。
+
 ## 設計の詳細
 
 実装寄りの方針は [DESIGN.md](./DESIGN.md) を参照してください。
