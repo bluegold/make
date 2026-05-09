@@ -2,68 +2,33 @@
 
 require 'fileutils'
 
-def main
-  lang = ARGV[0]
-  level = ARGV[1]
+LEVEL_SAMPLE_MAP = {
+  "level1" => "01_basic",
+  "level2" => "02_variables",
+  "level3" => "03_advanced",
+  "golang" => "01_basic",  # For golang, all levels use same samples
+}
 
-  if lang.nil? || level.nil?
-    puts "Usage: #{$0} <language> <level>"
-    puts "Example: #{$0} python level1"
-    exit 1
-  end
+LEVEL_SEQUENCE_MAP = {
+  "level1" => ["level1"],
+  "level2" => ["level1", "level2"],
+  "level3" => ["level1", "level2", "level3"],
+}
 
-  level_map = {
-    "level1" => "01_basic",
-    "level2" => "02_variables",
-    "level3" => "03_advanced",
-    "golang" => "01_basic",  # For golang, all levels use same samples
-  }
+def levels_for(lang, level)
+  LEVEL_SEQUENCE_MAP.fetch(level)
+end
 
-  sample_dir_name = level_map[level]
-  if sample_dir_name.nil?
-    puts "Error: Unknown level '#{level}'"
-    exit 1
-  end
-
-  project_root = Dir.pwd
-  sample_dir = File.expand_path(File.join("samples", sample_dir_name), project_root)
-  
-  unless Dir.exist?(sample_dir)
-    puts "Error: Sample directory '#{sample_dir}' not found."
-    exit 1
-  end
-
-  # Determine runner and builder paths
-  lang_dir = File.expand_path(lang, project_root)
-  runner_path = File.join(lang_dir, "runner")
-  builder_path = File.join(lang_dir, "builder")
-
-  unless File.exist?(runner_path)
-    puts "Error: Runner at '#{runner_path}' not found."
-    exit 1
-  end
-
-  # Run builder if it exists (for compiled languages)
-  if File.exist?(builder_path)
-    puts "Building #{lang}..."
-    build_output = `#{builder_path} 2>&1`
-    build_status = $?
-    unless build_status.success?
-      puts "Error: Build failed for #{lang}"
-      puts build_output
-      exit 1
-    end
-  end
-
+def evaluate_level(lang, level, runner_path, sample_dir, project_root)
   run_cmd = "#{runner_path} #{level}"
 
   puts "=== Evaluating #{lang} #{level} ==="
   puts "Samples: #{sample_dir}"
   puts "Runner: #{runner_path}"
   puts "------------------------"
-  
+
   samples = Dir.glob(File.join(sample_dir, "*.txt")).sort
-  
+
   success_count = 0
   fail_count = 0
 
@@ -71,9 +36,9 @@ def main
     sample_file = File.basename(sample_path)
     # error or loop in filename indicates an expected failure
     expect_fail = sample_file.include?("error") || sample_file.include?("loop")
-    
+
     print "Testing #{sample_file}... "
-    
+
     output = ""
     status = nil
     expected_path = sample_path.sub(/\.txt$/, ".expected")
@@ -141,7 +106,7 @@ def main
       end
     end
 
-    # Special check for parallel execution: 03_parallel.txt should finish in < 3 seconds 
+    # Special check for parallel execution: 03_parallel.txt should finish in < 3 seconds
     # (since sequential would take 4+ seconds)
     if passed && sample_file == "03_parallel.txt"
       if duration > 3.0
@@ -172,11 +137,79 @@ def main
 
   puts "========================"
   puts "Summary: #{success_count} passed, #{fail_count} failed"
+
+  [success_count, fail_count]
+end
+
+def main
+  lang = ARGV[0]
+  level = ARGV[1]
+
+  if lang.nil? || level.nil?
+    puts "Usage: #{$0} <language> <level>"
+    puts "Example: #{$0} python level1"
+    exit 1
+  end
+
+  sample_dir_name = LEVEL_SAMPLE_MAP[level]
+  if sample_dir_name.nil?
+    puts "Error: Unknown level '#{level}'"
+    exit 1
+  end
+
+  project_root = Dir.pwd
+  sample_dir = File.expand_path(File.join("samples", sample_dir_name), project_root)
+  
+  unless Dir.exist?(sample_dir)
+    puts "Error: Sample directory '#{sample_dir}' not found."
+    exit 1
+  end
+
+  # Determine runner and builder paths
+  lang_dir = File.expand_path(lang, project_root)
+  runner_path = File.join(lang_dir, "runner")
+  builder_path = File.join(lang_dir, "builder")
+
+  unless File.exist?(runner_path)
+    puts "Error: Runner at '#{runner_path}' not found."
+    exit 1
+  end
+
+  # Run builder if it exists (for compiled languages)
+  if File.exist?(builder_path)
+    puts "Building #{lang}..."
+    build_output = `#{builder_path} 2>&1`
+    build_status = $?
+    unless build_status.success?
+      puts "Error: Build failed for #{lang}"
+      puts build_output
+      exit 1
+    end
+  end
+
+  total_success = 0
+  total_fail = 0
+  levels_for(lang, level).each do |eval_level|
+    eval_sample_dir_name = LEVEL_SAMPLE_MAP[eval_level]
+    eval_sample_dir = File.expand_path(File.join("samples", eval_sample_dir_name), project_root)
+
+    unless Dir.exist?(eval_sample_dir)
+      puts "Error: Sample directory '#{eval_sample_dir}' not found."
+      exit 1
+    end
+
+    success_count, fail_count = evaluate_level(lang, eval_level, runner_path, eval_sample_dir, project_root)
+    total_success += success_count
+    total_fail += fail_count
+  end
+
+  puts "========================"
+  puts "Total: #{total_success} passed, #{total_fail} failed"
   
   # Return to original root (though redundant due to Dir.chdir block)
   Dir.chdir(project_root)
   
-  exit (fail_count == 0 ? 0 : 1)
+  exit (total_fail == 0 ? 0 : 1)
 end
 
 main if __FILE__ == $0
