@@ -1,0 +1,5 @@
+#!/bin/bash
+DIR="$(cd "$(dirname "$0")" && pwd)"
+LEVEL="$1"
+shift
+exec "$DIR/dist/$LEVEL/main" "$@"

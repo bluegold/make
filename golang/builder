@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+cd "$(dirname "$0")"
+rm -rf dist
+for level in level1 level2 level3; do
+  if [ -d $level ]; then
+    go build -o dist/$level/main ./$level/main.go
+  fi
+done

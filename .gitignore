@@ -29,3 +29,23 @@ python_out.txt
 
 # OS files
 .DS_Store
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+coverage.*
+*.coverprofile
+profile.cov
+golang/vendor/
+golang/go.work
+golang/go.work.sum
+golang/.env
+golang/.env.local
+golang/.env.*.local
+golang/bin/
+golang/dist/
