@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+LEVEL="${1:-}"
+shift || true
+
+if [[ -z "$LEVEL" ]]; then
+  echo "Usage: $0 <level> <taskfile> [target]" >&2
+  exit 1
+fi
+
+ENTRY="$DIR/$LEVEL/lib/main.rb"
+if [[ ! -f "$ENTRY" ]]; then
+  echo "Error: Level '$LEVEL' is not implemented yet." >&2
+  exit 1
+fi
+
+exec ruby "$ENTRY" "$@"
