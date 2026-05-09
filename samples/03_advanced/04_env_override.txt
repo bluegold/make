@@ -1,10 +1,10 @@
 # samples/03_advanced/04_env_override.txt
 
-# システムの環境変数に USER があればそちらを、なければ guest を使う
-USER = guest
+# TASK_RUNNER_TEST_USER が環境変数に設定されていればそちらを、なければ guest を使う
+TASK_RUNNER_TEST_USER = guest
 
 welcome:
-	echo "Welcome, $(USER)!"
+	echo "Welcome, $(TASK_RUNNER_TEST_USER)!"
 
 clean:
 	@echo "Nothing to clean for env_override"

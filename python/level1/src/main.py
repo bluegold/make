@@ -28,8 +28,8 @@ class TaskRunner:
                 if not line or line.startswith('#'):
                     continue
 
-                if line.startswith('\t'):
-                    # Command
+                if line[0] in ('\t', ' '):
+                    # Command (indented line)
                     if current_task:
                         command = line.strip()
                         if command:
@@ -87,6 +87,7 @@ class TaskRunner:
             
             for cmd in task.commands:
                 print(f"Executing: {cmd}")
+                sys.stdout.flush()
                 result = subprocess.run(cmd, shell=True)
                 if result.returncode != 0:
                     print(f"Error: Command '{cmd}' failed with exit code {result.returncode}")

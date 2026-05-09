@@ -39,7 +39,7 @@ class TaskRunner:
                 print(f"Error: Circular variable reference detected: {cycle}")
                 sys.exit(1)
             
-            val = extra_vars.get(var_name, self.variables.get(var_name, os.environ.get(var_name, "")))
+            val = extra_vars.get(var_name, os.environ.get(var_name, self.variables.get(var_name, "")))
             
             expanding.append(var_name)
             result = self.expand_variables(val, extra_vars, expanding)
@@ -60,7 +60,8 @@ class TaskRunner:
                 if not line or line.startswith('#'):
                     continue
 
-                if line.startswith('\t'):
+                if line[0] in ('\t', ' '):
+                    # Command (indented line)
                     if current_task:
                         command = line.strip()
                         if command:
@@ -160,6 +161,7 @@ class TaskRunner:
                     # Use a lock or print atomic to avoid mangled output in parallel
                     # For simplicity in this challenge, we just print
                     print(f"Executing: {actual_cmd}")
+                    sys.stdout.flush()
                 
                 result = subprocess.run(actual_cmd, shell=True)
                 if result.returncode != 0:

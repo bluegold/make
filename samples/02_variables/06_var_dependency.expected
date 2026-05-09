@@ -1,4 +1,8 @@
 Executing: echo "init"
+init
 Executing: echo "setup"
+setup
 Executing: echo "prepare"
+prepare
 Executing: echo "build"
+build

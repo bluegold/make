@@ -15,7 +15,8 @@ def main
   level_map = {
     "level1" => "01_basic",
     "level2" => "02_variables",
-    "level3" => "03_advanced"
+    "level3" => "03_advanced",
+    "golang" => "01_basic",  # For golang, all levels use same samples
   }
 
   sample_dir_name = level_map[level]

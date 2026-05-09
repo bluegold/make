@@ -30,7 +30,7 @@ class TaskRunner {
                 process.exit(1);
             }
 
-            const val = extraVars.get(varName) || this.variables.get(varName) || process.env[varName] || "";
+            const val = extraVars.get(varName) || process.env[varName] || this.variables.get(varName) || "";
             expanding.push(varName);
             const result = this.expandVariables(val, extraVars, expanding);
             expanding.pop();
@@ -52,7 +52,7 @@ class TaskRunner {
             line = line.trimEnd();
             if (!line || line.trimStart().startsWith('#')) continue;
 
-            if (rawLine.startsWith('\t')) {
+            if (rawLine.length > 0 && (rawLine[0] === '\t' || rawLine[0] === ' ')) {
                 if (currentTask) {
                     const command = line.trim();
                     if (command) {

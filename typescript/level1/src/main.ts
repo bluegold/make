@@ -1,6 +1,5 @@
 import * as fs from 'fs';
-import * as path from 'path';
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
 
 class Task {
     constructor(
@@ -28,7 +27,7 @@ class TaskRunner {
             line = line.trimEnd();
             if (!line || line.trimStart().startsWith('#')) continue;
 
-            if (rawLine.startsWith('\t')) {
+            if (rawLine.length > 0 && (rawLine[0] === '\t' || rawLine[0] === ' ')) {
                 if (currentTask) {
                     const command = line.trim();
                     if (command) {
@@ -91,11 +90,12 @@ class TaskRunner {
 
             for (const cmd of task.commands) {
                 console.log(`Executing: ${cmd}`);
-                try {
-                    execSync(cmd, { stdio: 'inherit' });
-                } catch (error) {
+                const result = spawnSync('sh', ['-c', cmd], { stdio: 'pipe' });
+                if (result.stdout) process.stdout.write(result.stdout);
+                if (result.stderr) process.stderr.write(result.stderr);
+                if (result.status !== 0) {
                     console.error(`Error: Command '${cmd}' failed`);
-                    process.exit(1);
+                    process.exit(result.status || 1);
                 }
             }
         }

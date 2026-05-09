@@ -32,8 +32,7 @@ class TaskRunner:
                 print(f"Error: Circular variable reference detected: {cycle}")
                 sys.exit(1)
             
-            # Variables can be from environment as well (optional but good)
-            val = self.variables.get(var_name, os.environ.get(var_name, ""))
+            val = os.environ.get(var_name, self.variables.get(var_name, ""))
             
             expanding.append(var_name)
             result = self.expand_variables(val, expanding)
@@ -54,8 +53,8 @@ class TaskRunner:
                 if not line or line.startswith('#'):
                     continue
 
-                if line.startswith('\t'):
-                    # Command
+                if line[0] in ('\t', ' '):
+                    # Command (indented line)
                     if current_task:
                         command = line.strip()
                         if command:
@@ -143,6 +142,7 @@ class TaskRunner:
                 # Expand variables just before execution (late binding)
                 expanded_cmd = self.expand_variables(cmd)
                 print(f"Executing: {expanded_cmd}")
+                sys.stdout.flush()
                 result = subprocess.run(expanded_cmd, shell=True)
                 if result.returncode != 0:
                     print(f"Error: Command '{expanded_cmd}' failed with exit code {result.returncode}")
