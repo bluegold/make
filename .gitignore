@@ -14,6 +14,18 @@ samples/02_variables/output.txt
 # Build Artifacts - samples/03_advanced
 samples/03_advanced/*.md
 samples/03_advanced/*.data
+samples/03_advanced/output.bin
+
+# TypeScript
+node_modules/
+typescript/dist/
+
+# Test output
+*_out.txt
+p_out.txt
+t_out.txt
+ts_out.txt
+python_out.txt
 
 # OS files
 .DS_Store

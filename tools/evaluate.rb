@@ -32,24 +32,33 @@ def main
     exit 1
   end
 
-  # Determine implementation path
-  impl_path = nil
-  case lang
-  when "python"
-    impl_path = File.expand_path(File.join("python", level, "src", "main.py"), project_root)
-  else
-    puts "Error: Unsupported language '#{lang}'"
+  # Determine runner and builder paths
+  lang_dir = File.expand_path(lang, project_root)
+  runner_path = File.join(lang_dir, "runner")
+  builder_path = File.join(lang_dir, "builder")
+
+  unless File.exist?(runner_path)
+    puts "Error: Runner at '#{runner_path}' not found."
     exit 1
   end
 
-  unless File.exist?(impl_path)
-    puts "Error: Implementation at '#{impl_path}' not found."
-    exit 1
+  # Run builder if it exists (for compiled languages)
+  if File.exist?(builder_path)
+    puts "Building #{lang}..."
+    build_output = `#{builder_path} 2>&1`
+    build_status = $?
+    unless build_status.success?
+      puts "Error: Build failed for #{lang}"
+      puts build_output
+      exit 1
+    end
   end
+
+  run_cmd = "#{runner_path} #{level}"
 
   puts "=== Evaluating #{lang} #{level} ==="
   puts "Samples: #{sample_dir}"
-  puts "Implementation: #{impl_path}"
+  puts "Runner: #{runner_path}"
   puts "------------------------"
   
   samples = Dir.glob(File.join(sample_dir, "*.txt")).sort
@@ -68,29 +77,31 @@ def main
     status = nil
     expected_path = sample_path.sub(/\.txt$/, ".expected")
     has_expected = File.exist?(expected_path)
-    start_time = Time.now
+    start_time = nil
 
-    # Execute in the sample directory to ensure relative paths in Taskfiles work
+    # Execute in the sample directory to ensure relative paths in commands work
     Dir.chdir(sample_dir) do
       # Pre-test cleanup: run 'clean' if the Taskfile supports it
       content = File.read(sample_file) rescue ""
       if content.include?("clean:")
-        `python3 #{impl_path} #{sample_file} clean > /dev/null 2>&1`
+        `#{run_cmd} #{sample_file} clean > /dev/null 2>&1`
       end
 
+      start_time = Time.now
+
       # Special handling for 01_timestamp: test the skip logic specifically
+      # For now, specifically for 01_timestamp, we want to test the skip logic.
       if sample_file == "01_timestamp.txt"
-        # (The specialized two-pass logic I wrote earlier)
         File.delete("output.data") if File.exist?("output.data")
         File.write("input.data", "test data")
-        
+
         # First run: should execute
-        `python3 #{impl_path} #{sample_file} > /dev/null 2>&1`
-        
+        `#{run_cmd} #{sample_file} > /dev/null 2>&1`
+
         # Second run: should NOT execute
-        output = `python3 #{impl_path} #{sample_file} 2>&1`
+        output = `#{run_cmd} #{sample_file} 2>&1`
         status = $?
-        
+
         if output.include?("Processing input.data...")
           status = Process::Status.wait(spawn("false"))
           output = "Timestamp skip logic failed: Task ran even though output.data was up to date.\n" + output
@@ -99,11 +110,12 @@ def main
           status = Process::Status.wait(spawn("true"))
         end
       else
-        output = `python3 #{impl_path} #{sample_file} 2>&1`
+        output = `#{run_cmd} #{sample_file} 2>&1`
         status = $?
       end
+
     end
-    duration = Time.now - start_time
+    duration = start_time ? Time.now - start_time : 0
 
     passed = false
     reason = ""
