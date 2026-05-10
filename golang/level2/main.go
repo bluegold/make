@@ -19,7 +19,7 @@ func main() {
 		target = os.Args[2]
 	}
 
-	if err := taskrunner.RunLevel1(taskfile, target); err != nil {
+	if err := taskrunner.RunLevel2(taskfile, target); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}

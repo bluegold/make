@@ -7,7 +7,6 @@ LEVEL_SAMPLE_MAP = {
   "level2" => "02_variables",
   "level3" => "03_advanced",
   "level4" => "04_implicit",
-  "golang" => "01_basic",  # For golang, all levels use same samples
 }
 
 LEVEL_SEQUENCE_MAP = {

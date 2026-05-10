@@ -20,7 +20,7 @@ evaluate: evaluate-golang evaluate-python evaluate-typescript evaluate-ruby
 
 evaluate-golang:
 	mkdir -p /tmp/go-build
-	GOCACHE=/tmp/go-build ruby tools/evaluate.rb golang level1
+	GOCACHE=/tmp/go-build ruby tools/evaluate.rb golang level3
 
 evaluate-python:
 	ruby tools/evaluate.rb python level3
