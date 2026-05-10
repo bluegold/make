@@ -10,7 +10,7 @@ test-python:
 	python3 python/level3/test/test_runner.py
 
 test-typescript:
-	echo "no test"
+	cd typescript && npx jest --runInBand
 
 test-ruby:
 	ruby ruby/level1/test/test_task_runner.rb
