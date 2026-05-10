@@ -1,0 +1,3 @@
+Specific compile src/main.c -> src/main.o
+Generic compile lib.c -> lib.o
+Linking app

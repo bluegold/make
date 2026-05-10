@@ -1,0 +1,3 @@
+Generating app.c from app.src
+Compiling app.c -> app.o
+Linking app

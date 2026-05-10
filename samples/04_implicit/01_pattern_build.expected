@@ -1,0 +1,3 @@
+Compiling main.c -> main.o
+Compiling util.c -> util.o
+Linking app

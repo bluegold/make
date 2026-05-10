@@ -1,0 +1,4 @@
+# samples/04_implicit/06_missing_rule_error.txt
+
+app: missing.o
+	echo "Linking app"

@@ -1,0 +1,12 @@
+# samples/04_implicit/01_pattern_build.txt
+
+%.o: %.c
+	echo "Compiling $< -> $@"
+
+app: main.o util.o
+	echo "Linking app"
+
+.PHONY: clean
+
+clean:
+	rm -f main.o util.o app

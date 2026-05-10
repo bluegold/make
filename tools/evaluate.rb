@@ -6,6 +6,7 @@ LEVEL_SAMPLE_MAP = {
   "level1" => "01_basic",
   "level2" => "02_variables",
   "level3" => "03_advanced",
+  "level4" => "04_implicit",
   "golang" => "01_basic",  # For golang, all levels use same samples
 }
 
@@ -13,6 +14,7 @@ LEVEL_SEQUENCE_MAP = {
   "level1" => ["level1"],
   "level2" => ["level1", "level2"],
   "level3" => ["level1", "level2", "level3"],
+  "level4" => ["level1", "level2", "level3", "level4"],
 }
 
 def levels_for(lang, level)
@@ -21,6 +23,7 @@ end
 
 def evaluate_level(lang, level, runner_path, sample_dir, project_root)
   run_cmd = "#{runner_path} #{level}"
+  level4_mode = File.basename(sample_dir) == "04_implicit"
 
   puts "=== Evaluating #{lang} #{level} ==="
   puts "Samples: #{sample_dir}"
@@ -86,10 +89,17 @@ def evaluate_level(lang, level, runner_path, sample_dir, project_root)
     passed = false
     reason = ""
 
+    comparison_output = output
+    if level4_mode
+      comparison_output = output.lines.reject do |line|
+        line.start_with?("Executing: ") || line.include?("Ractor API is experimental")
+      end.join
+    end
+
     if has_expected
       expected_content = File.read(expected_path).strip
       # Check if expected content is in output (partial match is often enough and robust)
-      if output.include?(expected_content)
+      if comparison_output.include?(expected_content)
         passed = true
       else
         passed = false

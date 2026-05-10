@@ -1,0 +1,15 @@
+# samples/04_implicit/02_rule_priority.txt
+
+app: main.o util.o
+	echo "Linking app"
+
+%.o: %.c
+	echo "Generic compile $< -> $@"
+
+main.o: main.c
+	echo "Explicit compile main.c -> main.o"
+
+.PHONY: clean
+
+clean:
+	rm -f main.o util.o app

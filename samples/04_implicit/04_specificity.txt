@@ -1,0 +1,15 @@
+# samples/04_implicit/04_specificity.txt
+
+%.o: %.c
+	echo "Generic compile $< -> $@"
+
+src/%.o: src/%.c
+	echo "Specific compile $< -> $@"
+
+app: src/main.o lib.o
+	echo "Linking app"
+
+.PHONY: clean
+
+clean:
+	rm -f src/main.o lib.o app

@@ -1,0 +1,6 @@
+# samples/04_implicit/03_phony.txt
+
+.PHONY: clean
+
+clean:
+	echo "Cleaning generated files"

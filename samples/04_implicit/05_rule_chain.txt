@@ -1,0 +1,15 @@
+# samples/04_implicit/05_rule_chain.txt
+
+%.c: %.src
+	echo "Generating $@ from $<"
+
+%.o: %.c
+	echo "Compiling $< -> $@"
+
+app: app.o
+	echo "Linking app"
+
+.PHONY: clean
+
+clean:
+	rm -f app.c app.o app
