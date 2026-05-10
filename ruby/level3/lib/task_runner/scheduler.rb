@@ -2,11 +2,12 @@ require "etc"
 
 module TaskRunner
   class Scheduler
-    def initialize(program, max_workers: nil)
+    def initialize(program, max_workers: nil, phony_targets: Set.new)
       @program = program
       @resolver = Resolver.new(program.tasks)
       @expander = Expander.new(program.variables)
       @max_workers = max_workers
+      @phony_targets = phony_targets
     end
 
     def run(target_name)
@@ -146,6 +147,7 @@ module TaskRunner
     end
 
     def needs_update?(target, dependencies)
+      return true if @phony_targets.include?(target)
       return true unless File.exist?(target)
 
       target_mtime = File.mtime(target)
